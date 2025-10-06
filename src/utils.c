@@ -55,8 +55,10 @@ void	clean_up(t_data *data)
 		{
 			pthread_mutex_destroy(&data->philos[i].l_fork->mutex);
 			pthread_mutex_destroy(&data->philos[i].r_fork->mutex);
+			pthread_mutex_destroy(&data->philos[i].last_meal_lock);
 			i++;
 		}
+		pthread_mutex_destroy(&data->stop_lock);
 		free(data->philos);
 		free(data->forks);
 		free(data);
@@ -73,17 +75,14 @@ time_t	get_time(void)
 
 void	print_status_message(t_philo_status status, t_philo *philo)
 {
-	time_t timestamp;
-
-	timestamp = get_time() - philo->data->start_time;
 	if (status == SLEEP)
-		printf("%6ld %d is sleeping\n", timestamp, philo->id);
+		printf("%ld %d is sleeping\n", get_time() - philo->data->start_time, philo->id);
 	if (status == EAT)
-		printf("%6ld %d is eating\n", timestamp, philo->id);
+		printf("%ld %d is eating\n", get_time() - philo->data->start_time, philo->id);
 	if (status == TAKE_FORK)
-		printf("%6ld %d has taken a fork\n", timestamp, philo->id);
+		printf("%ld %d has taken a fork\n", get_time() - philo->data->start_time, philo->id);
 	if (status == THINK)
-		printf("%6ld %d is thinking\n", timestamp, philo->id);
+		printf("%ld %d is thinking\n", get_time() - philo->data->start_time, philo->id);
 	if (status == DIE)
-		printf("%6ld %d died\n", timestamp, philo->id);
+		printf("%ld %d died\n", get_time() - philo->data->start_time, philo->id);
 }
