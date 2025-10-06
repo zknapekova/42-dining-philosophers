@@ -72,7 +72,12 @@ void	clean_up(t_data *data);
 time_t	get_time(void);
 void	print_status_message(t_philo_status status, t_philo *philo);
 void	one_philosopher(t_philo *philo);
-void	philo_dies(t_philo *philo);
-
+int		philo_dies_check(t_philo *philo);
+int		check_simulation_stop_fl(t_data *data);
+int		start_monitor(t_data *data);
+int		philo_activity(t_philo *philo, t_philo_status status);
+time_t	determine_think_time(t_philo *philo);
+void	update_last_meal_time(t_philo *philo);
+int		philo_eating(t_philo *philo);
 
 # endif
