@@ -16,7 +16,7 @@ void* monitoring_routine(void* arg)
 				return (NULL);
 			i++;
 		}
-		usleep(200);
+		usleep(30);
 	}
 	return (NULL);
 }
@@ -37,13 +37,13 @@ int	philo_dies_check(t_philo *philo)
 	pthread_mutex_lock(&philo->last_meal_lock);
 	//printf("\n\nID: %d get_time: %ld, last meal time: %ld\n\n", philo->id, get_time(), philo->last_meal_time);
 	if ((get_time() >= philo->last_meal_time + philo->data->t_die || \
-	philo->n_meal == philo->data->count_eat) &&
-	!check_simulation_stop_fl(philo->data))
+	philo->n_meal == philo->data->count_eat))
 	{
 		pthread_mutex_lock(&philo->data->stop_lock);
 		philo->data->stop = 1;
 		pthread_mutex_unlock(&philo->data->stop_lock);
-		print_status_message(DIE, philo);
+		if (philo->data->count_eat != philo->n_meal)
+			print_status_message(DIE, philo);
 		status = 1;
 	}
 	pthread_mutex_unlock(&philo->last_meal_lock);
