@@ -16,8 +16,8 @@
 struct s_data;
 
 typedef enum e_fork_status {
-  FREE,
-  USED,
+  AVAILABLE,
+  UNAVAILABLE,
 } t_fork_status;
 
 typedef enum e_philo_status {
@@ -55,11 +55,13 @@ typedef struct s_data
 	time_t			t_sleep;
 	time_t			t_eat;
 	int				count_eat;
+	int				count_eat_n_philos;
 	int				stop;
 	time_t			start_time;
 	t_philo			*philos;
 	t_fork			*forks;
 	pthread_mutex_t	stop_lock;
+	pthread_mutex_t	write_lock;
 	pthread_t 		monitoring_th;
 }	t_data;
 
@@ -70,7 +72,6 @@ int		ft_atoi_philos(const char *nptr);
 int		validate(int argc, char *argv[], t_data *data);
 void	clean_up(t_data *data);
 time_t	get_time(void);
-void	print_status_message(t_philo_status status, t_philo *philo);
 void	one_philosopher(t_philo *philo);
 int		philo_dies_check(t_philo *philo);
 int		check_simulation_stop_fl(t_data *data);
@@ -79,5 +80,9 @@ int		philo_activity(t_philo *philo, t_philo_status status);
 time_t	determine_think_time(t_philo *philo);
 void	update_last_meal_time(t_philo *philo);
 int		philo_eating(t_philo *philo);
+int		print_status_message(t_philo_status status, t_philo *philo, time_t start_time);
+int		create_threads(t_data *data);
+int		join_threads(t_data *data);
+void	detach_threads(t_data *data, int n);
 
 # endif
