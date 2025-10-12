@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-void* routine(void* arg)
+void	*routine(void *arg)
 {
 	t_philo	*philo;
 
@@ -12,12 +12,12 @@ void* routine(void* arg)
 	if (philo->id % 2 && philo->data->n_philos < 50)
 		usleep(50 * philo->data->n_philos);
 	else if (philo->id % 2 && philo->data->n_philos >= 50)
-		usleep(50 * philo->data->n_philos/2);
+		usleep(50 * philo->data->n_philos / 2);
 	while (1)
 	{
 		if (philo_eating(philo) || \
-			philo_activity(philo, SLEEP) || \
-			philo_activity(philo, THINK))
+		philo_activity(philo, SLEEP) || \
+		philo_activity(philo, THINK))
 			return (NULL);
 	}
 	return (NULL);
@@ -31,7 +31,8 @@ int	create_threads(t_data *data)
 	while (i < data->n_philos)
 	{
 		data->philos[i].last_meal_time = data->start_time;
-		if (pthread_create(&data->philos[i].th, NULL, &routine, &data->philos[i]) != 0)
+		if (pthread_create(&data->philos[i].th, NULL, &routine, \
+			&data->philos[i]) != 0)
 			return (print_err(TH_CREATE_ERROR), detach_threads(data, i - 1), 1);
 		i++;
 	}
@@ -89,4 +90,3 @@ void	clean_up(t_data *data)
 		free(data);
 	}
 }
-

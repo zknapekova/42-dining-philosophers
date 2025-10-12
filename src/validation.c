@@ -20,15 +20,26 @@ static int	init_data(int argc, char *argv[], t_data *data)
 	return (0);
 }
 
+static int	init_mutexes(t_data *data, int i)
+{
+	if (pthread_mutex_init(&data->philos[i].r_fork->mutex, NULL) != 0)
+		return (print_err(MUTEX_INIT_ERROR), 1);
+	if (pthread_mutex_init(&data->philos[i].l_fork->mutex, NULL) != 0)
+		return (print_err(MUTEX_INIT_ERROR), 1);
+	if (pthread_mutex_init(&data->philos[i].last_meal_lock, NULL) != 0)
+		return (print_err(MUTEX_INIT_ERROR), 1);
+	return (0);
+}
+
 static int	init_philos(t_data *data)
 {
 	int	i;
 
-	i = 0;
+	i = -1;
 	data->philos = malloc(sizeof(t_philo) * data->n_philos);
 	if (!data->philos)
 		return (print_err(MALLOC_ERROR), 1);
-	while (i < data->n_philos)
+	while (++i < data->n_philos)
 	{
 		data->philos[i].id = i + 1;
 		data->philos[i].n_meal = 0;
@@ -43,15 +54,10 @@ static int	init_philos(t_data *data)
 			data->philos[i].r_fork = &data->forks[data->n_philos - 1];
 			data->philos[i].l_fork = &data->forks[i];
 		}
-		if (pthread_mutex_init(&data->philos[i].r_fork->mutex, NULL) != 0)
-			return (print_err(MUTEX_INIT_ERROR), 1);
-		if (pthread_mutex_init(&data->philos[i].l_fork->mutex, NULL) != 0)
-			return (print_err(MUTEX_INIT_ERROR), 1);
-		if (pthread_mutex_init(&data->philos[i].last_meal_lock, NULL) != 0)
-			return (print_err(MUTEX_INIT_ERROR), 1);
-		i++;
+		if (init_mutexes(data, i))
+			return (1);
 	}
-	return 0;
+	return (0);
 }
 
 static int	init_forks(t_data *data)

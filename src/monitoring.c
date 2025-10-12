@@ -1,7 +1,7 @@
 #include "philo.h"
 #include <unistd.h>
 
-void* monitoring_routine(void* arg)
+void	*monitoring_routine(void *arg)
 {
 	t_data	*data;
 	int		i;
@@ -25,7 +25,7 @@ int	start_monitor(t_data *data)
 {
 	if (pthread_create(&data->monitoring_th, NULL, &monitoring_routine, \
 		data) != 0)
-			return (print_err(TH_CREATE_ERROR), 1);
+		return (print_err(TH_CREATE_ERROR), 1);
 	return (0);
 }
 
@@ -46,7 +46,7 @@ int	philo_dies_check(t_philo *philo)
 		status = 1;
 	}
 	pthread_mutex_unlock(&philo->last_meal_lock);
-	return status;
+	return (status);
 }
 
 int	check_simulation_stop_fl(t_data *data)
