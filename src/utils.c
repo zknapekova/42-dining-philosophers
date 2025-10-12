@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/12 16:33:37 by zuknapek          #+#    #+#             */
+/*   Updated: 2025/10/12 16:43:03 by zuknapek         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 #include <unistd.h>
 #include <sys/time.h>
@@ -51,22 +63,28 @@ time_t	get_time(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int	print_status_message(t_philo_status status, t_philo *philo, time_t start_time)
+int	print_status_message(t_philo_status status, t_philo *philo, \
+	time_t start_time)
 {
 	pthread_mutex_lock(&philo->data->write_lock);
 	if (check_simulation_stop_fl(philo->data))
 		return (pthread_mutex_unlock(&philo->data->write_lock), 1);
 	if (status == SLEEP)
-		printf("%ld %d is sleeping\n", start_time - philo->data->start_time, philo->id);
+		printf("%ld %d is sleeping\n", start_time - \
+			philo->data->start_time, philo->id);
 	if (status == EAT)
-		printf("%ld %d is eating\n", start_time - philo->data->start_time, philo->id);
+		printf("%ld %d is eating\n", start_time - \
+			philo->data->start_time, philo->id);
 	if (status == TAKE_FORK)
-		printf("%ld %d has taken a fork\n", start_time - philo->data->start_time, philo->id);
+		printf("%ld %d has taken a fork\n", start_time - \
+			philo->data->start_time, philo->id);
 	if (status == THINK)
-		printf("%ld %d is thinking\n", start_time - philo->data->start_time, philo->id);
+		printf("%ld %d is thinking\n", start_time - \
+			philo->data->start_time, philo->id);
 	if (status == DIE)
 	{
-		printf("%ld %d died\n", get_time() - philo->data->start_time, philo->id);
+		printf("%ld %d died\n", get_time() - \
+		philo->data->start_time, philo->id);
 		pthread_mutex_lock(&philo->data->stop_lock);
 		philo->data->stop = 1;
 		pthread_mutex_unlock(&philo->data->stop_lock);

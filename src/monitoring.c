@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   monitoring.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/12 16:34:08 by zuknapek          #+#    #+#             */
+/*   Updated: 2025/10/12 16:52:58 by zuknapek         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 #include <unistd.h>
 
@@ -59,4 +71,18 @@ int	check_simulation_stop_fl(t_data *data)
 		result = 1;
 	pthread_mutex_unlock(&data->stop_lock);
 	return (result);
+}
+
+void	one_philosopher(t_philo *philo)
+{
+	while (get_time() < philo->data->start_time)
+		usleep(100);
+	pthread_mutex_lock(&philo->r_fork->mutex);
+	print_status_message(TAKE_FORK, philo, get_time());
+	usleep(1000 * philo->data->t_die);
+	print_status_message(DIE, philo, get_time());
+	pthread_mutex_lock(&philo->data->stop_lock);
+	philo->data->stop = 1;
+	pthread_mutex_unlock(&philo->data->stop_lock);
+	pthread_mutex_unlock(&philo->r_fork->mutex);
 }

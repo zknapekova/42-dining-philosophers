@@ -1,20 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   simulation_utils.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/12 16:34:17 by zuknapek          #+#    #+#             */
+/*   Updated: 2025/10/12 16:53:10 by zuknapek         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 #include <unistd.h>
-
-void	one_philosopher(t_philo *philo)
-{
-	while (get_time() < philo->data->start_time)
-		usleep(100);
-	pthread_mutex_lock(&philo->r_fork->mutex);
-	print_status_message(TAKE_FORK, philo, get_time());
-	usleep(1000 * philo->data->t_die);
-	print_status_message(DIE, philo, get_time());
-	pthread_mutex_lock(&philo->data->stop_lock);
-	philo->data->stop = 1;
-	pthread_mutex_unlock(&philo->data->stop_lock);
-	pthread_mutex_unlock(&philo->r_fork->mutex);
-}
-
 
 time_t	determine_think_time(t_philo *philo)
 {
@@ -38,7 +35,7 @@ time_t	determine_think_time(t_philo *philo)
 	}
 	if (time_to_think < 0)
 		time_to_think = 0;
-	return time_to_think;
+	return (time_to_think);
 }
 
 void	update_last_meal_time(t_philo *philo)
@@ -48,35 +45,33 @@ void	update_last_meal_time(t_philo *philo)
 	pthread_mutex_unlock(&philo->last_meal_lock);
 }
 
+int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
+{
+	if (status == SLEEP)
+		*time = philo->data->t_sleep;
+	else if (status == EAT)
+	{
+		*time = philo->data->t_eat;
+		if (philo_dies_check(philo))
+			return (1);
+	}
+	else if (status == THINK)
+		*time = determine_think_time(philo);
+	return (0);
+}
+
 int	philo_activity(t_philo *philo, t_philo_status status)
 {
 	time_t	start;
 	time_t	time;
 
-	if (status == SLEEP)
-	{
-		time = philo->data->t_sleep;
-		start = get_time();
-		if (print_status_message(status, philo, start))
-			return (1);
-	}
-	else if (status == EAT)
-	{
-		time = philo->data->t_eat;
-		if (philo_dies_check(philo))
-			return (1);
-		start = get_time();
-		if (print_status_message(status, philo, start))
-			return (1);
+	if (get_activity_time(philo, status, &time))
+		return (1);
+	start = get_time();
+	if (print_status_message(status, philo, start))
+		return (1);
+	if (status == EAT)
 		update_last_meal_time(philo);
-	}
-	else if (status == THINK)
-	{
-		time = determine_think_time(philo);
-		start = get_time();
-		if (print_status_message(status, philo, start))
-			return (1);
-	}
 	while (1)
 	{
 		if (check_simulation_stop_fl(philo->data))
@@ -87,7 +82,6 @@ int	philo_activity(t_philo *philo, t_philo_status status)
 	}
 	return (0);
 }
-
 
 int	philo_eating(t_philo *philo)
 {
@@ -110,8 +104,8 @@ int	philo_eating(t_philo *philo)
 	pthread_mutex_unlock(&philo->last_meal_lock);
 	philo_dies_check(philo);
 	philo->l_fork->status = AVAILABLE;
-    philo->r_fork->status = AVAILABLE;
-    pthread_mutex_unlock(&philo->l_fork->mutex);
-    pthread_mutex_unlock(&philo->r_fork->mutex);
-    return (0);
+	philo->r_fork->status = AVAILABLE;
+	pthread_mutex_unlock(&philo->l_fork->mutex);
+	pthread_mutex_unlock(&philo->r_fork->mutex);
+	return (0);
 }
