@@ -1,0 +1,11 @@
+SEMAPHORE=unsigned int, we can increment and decrement and these operations are atomic
+then we have:
+wait() = decrements the value if it's greater than 0, otherwise it waits until it's positive
+post() = increases the value by 1
+
+binary semaphores = only values 1 or 0
+
+
+
+
+
