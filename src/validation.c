@@ -89,18 +89,21 @@ static int	init_forks(t_data *data)
 	return (0);
 }
 
-int	validate(int argc, char *argv[], t_data *data)
+t_data	*validate(int argc, char *argv[])
 {
-	if (argc < 5 || argc > 6)
-		return (print_err(N_ARG_ERROR), free(data), 1);
+	t_data	*data;
+	
+	data = malloc(sizeof(t_data));
+	if (!data)
+		return (print_err(MALLOC_ERROR), NULL);
 	if (init_data(argc, argv, data))
-		return (free(data), 1);
+		return (free(data), NULL);
 	if (data->n_philos <= 0 || data->t_die < 0 || data->t_eat < 0 \
 	|| data->t_sleep < 0 || data->count_eat == -2)
-		return (print_err(NUM_ARG_ERROR), free(data), 1);
+		return (print_err(NUM_ARG_ERROR), free(data), NULL);
 	if (data->count_eat == 0)
-		return (free(data), 1);
+		return (free(data), NULL);
 	if (init_forks(data) || init_philos(data))
-		return (clean_up(data), 1);
-	return (0);
+		return (clean_up(data), NULL);
+	return (data);
 }

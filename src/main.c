@@ -17,10 +17,11 @@ int	main(int argc, char *argv[])
 {
 	t_data	*data;
 
-	data = malloc(sizeof(t_data));
+	
+	if (argc < 5 || argc > 6)
+		return (print_err(N_ARG_ERROR), 1);
+	data = validate(argc, argv);
 	if (!data)
-		return (print_err(MALLOC_ERROR), 1);
-	if (validate(argc, argv, data))
 		return (1);
 	data->start_time = get_time() + (data->n_philos * 4);
 	if (data->n_philos == 1)

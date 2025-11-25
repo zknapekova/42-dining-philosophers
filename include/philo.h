@@ -82,7 +82,7 @@ typedef struct s_data
 int		ft_strlen(char *str);
 void	print_err(char *message);
 int		ft_atoi_philos(const char *nptr);
-int		validate(int argc, char *argv[], t_data *data);
+t_data	*validate(int argc, char *argv[]);
 void	clean_up(t_data *data);
 time_t	get_time(void);
 void	one_philosopher(t_philo *philo);
