@@ -15,7 +15,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-
+#include <stdio.h>
 int	init_process(t_data *data)
 {
 	int	i;
@@ -26,7 +26,7 @@ int	init_process(t_data *data)
 	data->start_time = get_time() + (data->n_philos * 4);
 	while (i <= data->n_philos)
 	{
-		data->philos[i].pid=fork();
+		data->philos[i].pid = fork();
 		if (data->philos[i].pid == -1)
 			return(print_err(PROC_CREATE_ERROR), clean_up(data), 1);
 		else if (data->philos[i].pid == 0)

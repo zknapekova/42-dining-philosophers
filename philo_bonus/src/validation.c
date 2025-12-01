@@ -34,11 +34,8 @@ static int	init_data(int argc, char *argv[], t_data *data)
 static int	init_philos(t_data *data)
 {
 	int		i;
-	char	*temp;
-	char	*sem_last_meal_name;
 
 	i = -1;
-	temp = NULL;
 	data->philos = malloc(sizeof(t_philo) * data->n_philos);
 	if (!data->philos)
 		return (print_err(MALLOC_ERROR), 1);
@@ -47,17 +44,6 @@ static int	init_philos(t_data *data)
 		data->philos[i].id = i + 1;
 		data->philos[i].n_meal = 0;
 		data->philos[i].data = data;
-		temp = ft_itoa(data->philos[i].id);
-		sem_last_meal_name = ft_strjoin("/sem_last_meal", temp);
-		if (!temp ||!sem_last_meal_name)
-			return(print_err(MALLOC_ERROR), 1);
-		sem_unlink(sem_last_meal_name);
-		data->philos[i].sem_last_meal = sem_open(sem_last_meal_name, O_CREAT, 0644, 1);
-		sem_unlink(sem_last_meal_name);
-		if (data->philos[i].sem_last_meal == SEM_FAILED)
-			return (free(temp), free(sem_last_meal_name), print_err(SEM_INIT_ERROR), 1);
-		free(sem_last_meal_name);
-		free(temp);
 	}
 	return (0);
 }

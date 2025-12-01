@@ -13,6 +13,7 @@
 #include "philo.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 
 static int	handle_err_status(int err_status, t_philo *philo)
@@ -29,6 +30,14 @@ void	routine(t_philo *philo)
 	
 	err = EXIT_SUCCESS;
 	philo->last_meal_time = philo->data->start_time;
+	sem_unlink(SEM_LAST_MEAL_NAME);
+	philo->sem_last_meal = sem_open(SEM_LAST_MEAL_NAME, O_CREAT, 0644, 1);
+	sem_unlink(SEM_LAST_MEAL_NAME);
+	if (philo->sem_last_meal == SEM_FAILED)
+	{	
+		print_err(SEM_INIT_ERROR);
+		exit (handle_err_status(ERROR_STATUS, philo));	
+	}
 	if (pthread_create(&philo->th, NULL, &philo_monitoring_routine, philo) != 0)
 	{
 		print_err(TH_CREATE_ERROR);

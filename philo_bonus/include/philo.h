@@ -30,6 +30,7 @@
 # define PROC_CREATE_ERROR "Creation of a child process failed"
 # define DIE_FROM_STARVATION_EXIT_STATUS 2
 # define ERROR_STATUS 1
+# define SEM_LAST_MEAL_NAME "/sem_last_meal"
 
 struct	s_data;
 
@@ -87,8 +88,6 @@ int		update_last_meal_time(t_philo *philo);
 void	philo_eating(t_philo *philo, int *err);
 int		print_status_message(t_philo_status status, \
 	t_philo *philo, time_t start_time);
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_itoa(int n);
 void	*philo_monitoring_routine(void *arg);
 void	routine(t_philo *philo);
 int		ft_strlen(const char *str);
