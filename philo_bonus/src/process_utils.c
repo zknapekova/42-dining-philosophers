@@ -19,17 +19,21 @@
 static int	handle_err_status(int err_status, t_philo *philo)
 {
 	if (pthread_detach(philo->th) != 0)
-		return (print_err(TH_JOIN_ERROR), clean_up(philo->data), ERROR_STATUS);
+	{
+		sem_close(philo->sem_last_meal);
+		print_err(TH_JOIN_ERROR);
+		return (clean_up(philo->data), ERROR_STATUS);
+	}
+	sem_close(philo->sem_last_meal);
 	return (clean_up(philo->data), err_status);
 }
 
-
+#include <stdio.h>
 void	routine(t_philo *philo)
 {
 	int	err;
 	
 	err = EXIT_SUCCESS;
-	philo->last_meal_time = philo->data->start_time;
 	sem_unlink(SEM_LAST_MEAL_NAME);
 	philo->sem_last_meal = sem_open(SEM_LAST_MEAL_NAME, O_CREAT, 0644, 1);
 	sem_unlink(SEM_LAST_MEAL_NAME);
@@ -49,6 +53,7 @@ void	routine(t_philo *philo)
 		usleep(50 * philo->data->n_philos);
 	else if (philo->id % 2 && philo->data->n_philos >= 50)
 		usleep(50 * philo->data->n_philos / 2);
+	printf("id: %d\n", philo->id);
 	while (1)
 	{
 		philo_eating(philo, &err);
@@ -66,17 +71,9 @@ void	routine(t_philo *philo)
 
 void	clean_up(t_data *data)
 {
-	int	i;
-
-	i = 0;
 	if (data)
 	{
-		while (i < data->n_philos)
-		{
-			if (data->philos[i].sem_last_meal)
-				sem_close(data->philos[i].sem_last_meal);
-			i++;
-		}
+
 		if (data->sem_stop)
 			sem_close(data->sem_stop);
 		if (data->sem_write)

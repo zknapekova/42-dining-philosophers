@@ -40,7 +40,10 @@ int	print_status_message(t_philo_status status, t_philo *philo, \
 		return (print_err(SEM_WAIT_ERROR), ERROR_STATUS);
 	err = check_simulation_stop_fl(philo->data);
 	if (err)
+	{
+		printf("philo %d exit check\n", philo->id);
 		return err;
+	}
 	if (status == SLEEP)
 		printf("%ld %d is sleeping\n", start_time - \
 			philo->data->start_time, philo->id);

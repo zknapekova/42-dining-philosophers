@@ -26,6 +26,7 @@ int	init_process(t_data *data)
 	data->start_time = get_time() + (data->n_philos * 4);
 	while (i <= data->n_philos)
 	{
+		data->philos[i].last_meal_time = data->start_time;
 		data->philos[i].pid = fork();
 		if (data->philos[i].pid == -1)
 			return(print_err(PROC_CREATE_ERROR), clean_up(data), 1);
@@ -33,8 +34,8 @@ int	init_process(t_data *data)
 			routine(&data->philos[i]);
 		i++;
 	}
-
 	exit_pid = wait(&status);
+	printf("exit pid: %d\n", exit_pid);
 	if (WIFEXITED(status))
 	{
         printf("Exit status: %d\n", WEXITSTATUS(status));

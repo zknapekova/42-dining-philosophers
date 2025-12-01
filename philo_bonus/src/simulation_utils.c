@@ -64,6 +64,7 @@ int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
 	return (0);
 }
 
+#include <stdio.h>
 void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 {
 	time_t	start;
