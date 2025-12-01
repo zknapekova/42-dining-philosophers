@@ -38,11 +38,15 @@ time_t	determine_think_time(t_philo *philo)
 	return (time_to_think);
 }
 
-void	update_last_meal_time(t_philo *philo)
+int	update_last_meal_time(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->last_meal_lock);
+	if (sem_wait(philo->sem_last_meal))
+		return (print_err(SEM_WAIT_ERROR), ERROR_STATUS);
 	philo->last_meal_time = get_time();
-	pthread_mutex_unlock(&philo->last_meal_lock);
+	if (sem_post(philo->sem_last_meal))
+		return (print_err(SEM_POST_ERROR), ERROR_STATUS);
+	return (0);
+	
 }
 
 int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
@@ -52,60 +56,93 @@ int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
 	else if (status == EAT)
 	{
 		*time = philo->data->t_eat;
-		if (philo_dies_check(philo))
-			return (1);
+		return (philo_dies_check(philo));
+
 	}
 	else if (status == THINK)
 		*time = determine_think_time(philo);
 	return (0);
 }
 
-int	philo_activity(t_philo *philo, t_philo_status status)
+void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 {
 	time_t	start;
 	time_t	time;
 
-	if (get_activity_time(philo, status, &time))
-		return (1);
+	*err = get_activity_time(philo, status, &time);
+	if (*err != 0)
+		return ;
 	start = get_time();
-	if (print_status_message(status, philo, start))
-		return (1);
+	*err = print_status_message(status, philo, start);
+	if (*err != 0)
+		return ;
 	if (status == EAT)
-		update_last_meal_time(philo);
+	{
+		*err = update_last_meal_time(philo);
+		if (*err != 0)
+			return ;
+	}
 	while (1)
 	{
-		if (check_simulation_stop_fl(philo->data))
-			return (1);
+		*err = philo_dies_check(philo);
+		if (*err)
+			return ;
 		if (start + time <= get_time())
-			return (0);
+			break ;
 		usleep(100);
 	}
-	return (0);
 }
 
-int	philo_eating(t_philo *philo)
+void	philo_eating(t_philo *philo, int *err)
 {
-	pthread_mutex_lock(&philo->r_fork->mutex);
-	philo->r_fork->status = UNAVAILABLE;
-	if (print_status_message(TAKE_FORK, philo, get_time()))
-		return (pthread_mutex_unlock(&philo->r_fork->mutex), 1);
-	pthread_mutex_lock(&philo->l_fork->mutex);
-	philo->l_fork->status = UNAVAILABLE;
-	if (print_status_message(TAKE_FORK, philo, get_time()))
-		return (pthread_mutex_unlock(&philo->r_fork->mutex), \
-		pthread_mutex_unlock(&philo->l_fork->mutex), 1);
-	if (philo_activity(philo, EAT))
-		return (pthread_mutex_unlock(&philo->r_fork->mutex), \
-		pthread_mutex_unlock(&philo->l_fork->mutex), 1);
-	pthread_mutex_lock(&philo->last_meal_lock);
-	if (++philo->n_meal == philo->data->count_eat && \
-		philo->data->count_eat_n_philos < philo->data->n_philos)
-		philo->data->count_eat_n_philos++;
-	pthread_mutex_unlock(&philo->last_meal_lock);
-	philo_dies_check(philo);
-	philo->l_fork->status = AVAILABLE;
-	philo->r_fork->status = AVAILABLE;
-	pthread_mutex_unlock(&philo->l_fork->mutex);
-	pthread_mutex_unlock(&philo->r_fork->mutex);
-	return (0);
+	if (sem_wait(philo->data->sem_forks))
+	{
+		print_err(SEM_WAIT_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
+	*err = print_status_message(TAKE_FORK, philo, get_time());
+	if (*err)
+		return ;
+	if (sem_wait(philo->data->sem_forks))
+	{
+		print_err(SEM_WAIT_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
+	*err = print_status_message(TAKE_FORK, philo, get_time());
+	if (*err)
+		return ;
+	philo_activity(philo, EAT, err);
+	if (*err)
+		return ;
+	if (sem_wait(philo->sem_last_meal))
+	{
+		print_err(SEM_WAIT_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
+	//if (++philo->n_meal == philo->data->count_eat)
+		//send signal to parent process?
+	*err = philo_dies_check(philo);
+	if (*err)
+		return ;
+	if (sem_post(philo->sem_last_meal))
+	{
+		print_err(SEM_POST_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
+	if (sem_post(philo->data->sem_forks))
+	{
+		print_err(SEM_POST_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
+	if (sem_post(philo->data->sem_forks))
+	{
+		print_err(SEM_POST_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
 }

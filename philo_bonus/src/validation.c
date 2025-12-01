@@ -83,7 +83,6 @@ static int	init_semaphors(t_data *data)
 }
 
 
-
 t_data	*validate(int argc, char *argv[])
 {
 	t_data	*data;

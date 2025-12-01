@@ -1,6 +1,7 @@
 #include "philo.h"
+#include <stdlib.h>
 
-int	ft_strlen(char *str)
+int	ft_strlen(const char *str)
 {
 	int	len;
 
@@ -9,6 +10,50 @@ int	ft_strlen(char *str)
 	{
 		while (str[len])
 			len++;
+	}
+	return (len);
+}
+
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
+{
+	size_t	src_len;
+	size_t	i;
+	size_t	j;
+
+	if (!size && !dst)
+		return (0);
+	i = 0;
+	j = 0;
+	while (dst[i] && i <= size)
+		i++;
+	src_len = ft_strlen(src);
+	while (src[j] && i + j + 1 < size)
+	{
+		dst[i + j] = src[j];
+		j++;
+	}
+	if (size > i + j)
+		dst[i + j] = '\0';
+	if (size <= i)
+		return (src_len + size);
+	return (i + src_len);
+}
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+{
+	size_t	len;
+	size_t	i;
+
+	i = 0;
+	len = ft_strlen(src);
+	if (size > 0)
+	{
+		while (i < size - 1 && src[i])
+		{
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
 	}
 	return (len);
 }
@@ -35,50 +80,26 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-static int	ft_get_count_int_itoa(int n)
+int	ft_atoi_philos(const char *nptr)
 {
-	int	count;
+	int	res;
 
-	count = 0;
-	if (!n)
-		return (1);
-	if (n < 0)
-		count++;
-	while (n)
+	res = 0;
+	while (*nptr == 32 || (*nptr >= 9 && *nptr <= 13))
+		nptr++;
+	if ((*nptr < 48 || *nptr > 57) && (*nptr != 43))
+		return (-2);
+	if (*nptr == 43)
+		nptr++;
+	while (*nptr >= 48 && *nptr <= 57)
 	{
-		n = n / 10;
-		count++;
+		res *= 10;
+		res += *nptr - '0';
+		nptr++;
 	}
-	return (count);
-}
-
-char	*ft_itoa(int n)
-{
-	char		*result;
-	int			len;
-	long int	n_long;
-	int			i;
-
-	len = ft_get_count_int_itoa(n);
-	i = len - 1;
-	n_long = (long) n;
-	result = (char *)malloc(sizeof(char) * (len + 1));
-	if (!result)
-		return (NULL);
-	if (n_long < 0)
-	{
-		result[0] = '-';
-		n_long = n_long * (-1);
-	}
-	if (!n_long)
-		result[0] = '0';
-	while (n_long)
-	{
-		result[i--] = n_long % 10 + '0';
-		n_long /= 10;
-	}
-	result[len] = '\0';
-	return (result);
+	if (*nptr && (*nptr < 48 || *nptr > 57) && (*nptr != 43))
+		return (-2);
+	return (res);
 }
 
 

@@ -28,6 +28,8 @@
 # define SEM_WAIT_ERROR "Semafor lock failed"
 # define SEM_POST_ERROR "Semafor unlock failed"
 # define PROC_CREATE_ERROR "Creation of a child process failed"
+# define DIE_FROM_STARVATION_EXIT_STATUS 2
+# define ERROR_STATUS 1
 
 struct	s_data;
 
@@ -50,7 +52,6 @@ typedef struct s_philo
 	struct s_data	*data;
 	time_t			last_meal_time;
 	int				pid;
-	char			*sem_last_meal_name;
 	sem_t			*sem_last_meal;
 }	t_philo;
 
@@ -72,26 +73,24 @@ typedef struct s_data
 	pthread_t		monitoring_th;
 }	t_data;
 
-int		ft_strlen(char *str);
 void	print_err(char *message);
 int		ft_atoi_philos(const char *nptr);
 t_data	*validate(int argc, char *argv[]);
 void	clean_up(t_data *data);
 time_t	get_time(void);
-void	one_philosopher(t_philo *philo);
 int		philo_dies_check(t_philo *philo);
 int		check_simulation_stop_fl(t_data *data);
 int		start_monitor(t_data *data);
-int		philo_activity(t_philo *philo, t_philo_status status);
+void	philo_activity(t_philo *philo, t_philo_status status, int *err);
 time_t	determine_think_time(t_philo *philo);
-void	update_last_meal_time(t_philo *philo);
-int		philo_eating(t_philo *philo);
+int		update_last_meal_time(t_philo *philo);
+void	philo_eating(t_philo *philo, int *err);
 int		print_status_message(t_philo_status status, \
 	t_philo *philo, time_t start_time);
-int		create_threads(t_data *data);
-int		join_threads(t_data *data);
-void	detach_threads(t_data *data, int n);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
+void	*philo_monitoring_routine(void *arg);
+void	routine(t_philo *philo);
+int		ft_strlen(const char *str);
 
 #endif

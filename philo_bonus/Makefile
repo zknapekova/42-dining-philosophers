@@ -2,7 +2,7 @@ CC = cc
 FLAGS = -Wall -Werror -Wextra -g -pthread
 
 SRC_DIR = src/
-SRCS = main.c utils.c validation.c simulation_utils.c monitoring.c threads.c str_utils.c
+SRCS = main.c utils.c validation.c simulation_utils.c monitoring.c process_utils.c str_utils.c
 
 SRC = $(addprefix $(SRC_DIR), $(SRCS))
 OBJS = $(SRC:.c=.o)

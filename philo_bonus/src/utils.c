@@ -13,34 +13,13 @@
 #include "philo.h"
 #include <unistd.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 
 void	print_err(char *message)
 {
 	write(2, message, ft_strlen(message));
 	write(2, "\n", 1);
-}
-
-int	ft_atoi_philos(const char *nptr)
-{
-	int	res;
-
-	res = 0;
-	while (*nptr == 32 || (*nptr >= 9 && *nptr <= 13))
-		nptr++;
-	if ((*nptr < 48 || *nptr > 57) && (*nptr != 43))
-		return (-2);
-	if (*nptr == 43)
-		nptr++;
-	while (*nptr >= 48 && *nptr <= 57)
-	{
-		res *= 10;
-		res += *nptr - '0';
-		nptr++;
-	}
-	if (*nptr && (*nptr < 48 || *nptr > 57) && (*nptr != 43))
-		return (-2);
-	return (res);
 }
 
 time_t	get_time(void)
@@ -54,10 +33,14 @@ time_t	get_time(void)
 int	print_status_message(t_philo_status status, t_philo *philo, \
 	time_t start_time)
 {
+	int	err;
+	
+	err = 0;
 	if (sem_wait(philo->data->sem_write))
-		return (print_err(SEM_WAIT_ERROR), 1);
-	if (check_simulation_stop_fl(philo->data))
-		return (1);
+		return (print_err(SEM_WAIT_ERROR), ERROR_STATUS);
+	err = check_simulation_stop_fl(philo->data);
+	if (err)
+		return err;
 	if (status == SLEEP)
 		printf("%ld %d is sleeping\n", start_time - \
 			philo->data->start_time, philo->id);
@@ -71,16 +54,57 @@ int	print_status_message(t_philo_status status, t_philo *philo, \
 		printf("%ld %d is thinking\n", start_time - \
 			philo->data->start_time, philo->id);
 	if (status == DIE)
-	{
 		printf("%ld %d died\n", get_time() - \
 		philo->data->start_time, philo->id);
-		if (sem_wait(philo->data->sem_stop))
-			return (print_err(SEM_WAIT_ERROR), 1);
-		philo->data->stop = 1;
-		if (sem_post(philo->data->sem_stop))
-			return (print_err(SEM_POST_ERROR), 1);
-	}
-	if (sem_post(philo->data->sem_write))
-		return (print_err(SEM_POST_ERROR), 1);
+	else
+		if (sem_post(philo->data->sem_write))
+			return (print_err(SEM_POST_ERROR), ERROR_STATUS);
 	return (0);
 }
+
+static int	ft_get_count_int_itoa(int n)
+{
+	int	count;
+
+	count = 0;
+	if (!n)
+		return (1);
+	if (n < 0)
+		count++;
+	while (n)
+	{
+		n = n / 10;
+		count++;
+	}
+	return (count);
+}
+
+char	*ft_itoa(int n)
+{
+	char		*result;
+	int			len;
+	long int	n_long;
+	int			i;
+
+	len = ft_get_count_int_itoa(n);
+	i = len - 1;
+	n_long = (long) n;
+	result = (char *)malloc(sizeof(char) * (len + 1));
+	if (!result)
+		return (NULL);
+	if (n_long < 0)
+	{
+		result[0] = '-';
+		n_long = n_long * (-1);
+	}
+	if (!n_long)
+		result[0] = '0';
+	while (n_long)
+	{
+		result[i--] = n_long % 10 + '0';
+		n_long /= 10;
+	}
+	result[len] = '\0';
+	return (result);
+}
+
