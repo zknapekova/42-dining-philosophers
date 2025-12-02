@@ -44,13 +44,11 @@ int	check_simulation_stop_fl(t_data *data)
 	return (result);
 }
 
-#include <stdio.h>
 void	*philo_monitoring_routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	printf("start of monitoring routine for philo %d\n", philo->id);
 	while (1)
 	{
 		if (philo_dies_check(philo))

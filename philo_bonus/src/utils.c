@@ -65,3 +65,49 @@ int	print_status_message(t_philo_status status, t_philo *philo, \
 	return (0);
 }
 
+static int	ft_get_count_int_itoa(int n)
+{
+	int	count;
+
+	count = 0;
+	if (!n)
+		return (1);
+	if (n < 0)
+		count++;
+	while (n)
+	{
+		n = n / 10;
+		count++;
+	}
+	return (count);
+}
+
+char	*ft_itoa(int n)
+{
+	char		*result;
+	int			len;
+	long int	n_long;
+	int			i;
+
+	len = ft_get_count_int_itoa(n);
+	i = len - 1;
+	n_long = (long) n;
+	result = (char *)malloc(sizeof(char) * (len + 1));
+	if (!result)
+		return (NULL);
+	if (n_long < 0)
+	{
+		result[0] = '-';
+		n_long = n_long * (-1);
+	}
+	if (!n_long)
+		result[0] = '0';
+	while (n_long)
+	{
+		result[i--] = n_long % 10 + '0';
+		n_long /= 10;
+	}
+	result[len] = '\0';
+	return (result);
+}
+

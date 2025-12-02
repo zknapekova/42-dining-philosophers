@@ -18,14 +18,14 @@
 
 static int	handle_err_status(int err_status, t_philo *philo)
 {
-	if (pthread_detach(philo->th) != 0)
+	if (pthread_join(philo->th, NULL))
 	{
 		sem_close(philo->sem_last_meal);
 		print_err(TH_JOIN_ERROR);
-		return (clean_up(philo->data), ERROR_STATUS);
+		return (free(philo->data), ERROR_STATUS);
 	}
 	sem_close(philo->sem_last_meal);
-	return (clean_up(philo->data), err_status);
+	return (free(philo->data), err_status);
 }
 
 #include <stdio.h>
@@ -34,14 +34,6 @@ void	routine(t_philo *philo)
 	int	err;
 	
 	err = EXIT_SUCCESS;
-	sem_unlink(SEM_LAST_MEAL_NAME);
-	philo->sem_last_meal = sem_open(SEM_LAST_MEAL_NAME, O_CREAT, 0644, 1);
-	sem_unlink(SEM_LAST_MEAL_NAME);
-	if (philo->sem_last_meal == SEM_FAILED)
-	{	
-		print_err(SEM_INIT_ERROR);
-		exit (handle_err_status(ERROR_STATUS, philo));	
-	}
 	if (pthread_create(&philo->th, NULL, &philo_monitoring_routine, philo) != 0)
 	{
 		print_err(TH_CREATE_ERROR);
@@ -68,19 +60,3 @@ void	routine(t_philo *philo)
 	}
 }
 
-
-void	clean_up(t_data *data)
-{
-	if (data)
-	{
-
-		if (data->sem_stop)
-			sem_close(data->sem_stop);
-		if (data->sem_write)
-			sem_close(data->sem_write);
-		if (data->sem_forks)
-			sem_close(data->sem_forks);
-		free(data->philos);
-		free(data);
-	}
-}

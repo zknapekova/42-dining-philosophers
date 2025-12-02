@@ -71,7 +71,7 @@ typedef struct s_data
 	sem_t			*sem_stop;
 	sem_t			*sem_write;
 	sem_t			*sem_forks;
-	pthread_t		monitoring_th;
+	//pthread_t		monitoring_th;
 }	t_data;
 
 void	print_err(char *message);
@@ -91,5 +91,7 @@ int		print_status_message(t_philo_status status, \
 void	*philo_monitoring_routine(void *arg);
 void	routine(t_philo *philo);
 int		ft_strlen(const char *str);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_itoa(int n);
 
 #endif
