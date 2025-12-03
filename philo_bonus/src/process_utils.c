@@ -15,6 +15,37 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
+int	init_process(t_data *data)
+{
+	int	i;
+	int	status;
+	int exit_status;
+	
+	i = 0;
+	data->start_time = get_time() + (data->n_philos * 4);
+	while (i < data->n_philos)
+	{
+		data->philos[i].last_meal_time = data->start_time;
+		data->philos[i].pid = fork();
+		if (data->philos[i].pid == -1)
+			return(print_err(PROC_CREATE_ERROR), clean_up(data), 1);
+		else if (data->philos[i].pid == 0)
+		{
+			routine(&data->philos[i]);
+			break;
+		}
+		i++;
+	}
+	i = 0;
+	while (i < data->n_philos)
+	{
+		waitpid(data->philos[i].pid, &status, 0);
+		if (WIFEXITED(status)) 
+    		exit_status = WEXITSTATUS(status);
+		i++;
+	}
+	return (0);
+}
 
 static int	handle_err_status(int err_status, t_philo *philo)
 {
@@ -25,7 +56,6 @@ static int	handle_err_status(int err_status, t_philo *philo)
 	}
 	return (clean_up(philo->data), err_status);
 }
-
 
 void	routine(t_philo *philo)
 {

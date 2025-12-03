@@ -101,4 +101,3 @@ char	*ft_itoa(int n)
 	result[len] = '\0';
 	return (result);
 }
-

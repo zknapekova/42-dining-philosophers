@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-
 static int	init_data(int argc, char *argv[], t_data *data)
 {
 	data->n_philos = ft_atoi_philos(argv[1]);
@@ -28,7 +27,6 @@ static int	init_data(int argc, char *argv[], t_data *data)
 		data->count_eat = ft_atoi_philos(argv[5]);
 	return (0);
 }
-
 
 static int	init_philos(t_data *data)
 {
@@ -83,7 +81,6 @@ static int	init_semaphors(t_data *data)
 		return (print_err(SEM_INIT_ERROR), 1);
 	return (0);
 }
-
 
 t_data	*validate(int argc, char *argv[])
 {

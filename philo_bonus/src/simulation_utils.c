@@ -56,13 +56,11 @@ int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
 	{
 		*time = philo->data->t_eat;
 		return (philo_dies_check(philo));
-
 	}
 	else if (status == THINK)
 		*time = determine_think_time(philo);
 	return (0);
 }
-
 
 void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 {

@@ -14,7 +14,6 @@ int	ft_strlen(const char *str)
 	return (len);
 }
 
-
 int	ft_atoi_philos(const char *nptr)
 {
 	int	res;
@@ -102,5 +101,3 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ft_strlcat(res, s2, s1_len + s2_len + 1);
 	return (res);
 }
-
-

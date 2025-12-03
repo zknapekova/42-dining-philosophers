@@ -35,7 +35,6 @@
 
 struct	s_data;
 
-
 typedef enum e_philo_status
 {
 	SLEEP,
@@ -44,7 +43,6 @@ typedef enum e_philo_status
 	TAKE_FORK,
 	DIE
 }	t_philo_status;
-
 
 typedef struct s_philo
 {
