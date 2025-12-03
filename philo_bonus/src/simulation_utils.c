@@ -63,7 +63,7 @@ int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
 	return (0);
 }
 
-#include <stdio.h>
+
 void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 {
 	time_t	start;
@@ -87,7 +87,6 @@ void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 		if (start + time <= get_time())
 			break ;
 	}
-	printf("philo %d finished eating\n", philo->id);
 }
 
 void	philo_eating(t_philo *philo, int *err)
@@ -113,24 +112,21 @@ void	philo_eating(t_philo *philo, int *err)
 	philo_activity(philo, EAT, err);
 	if (*err)
 		return ;
+	if (sem_post(philo->data->sem_forks))
+	{
+		print_err(SEM_POST_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
+	if (sem_post(philo->data->sem_forks))
+	{
+		print_err(SEM_POST_ERROR);
+		*err = ERROR_STATUS;
+		return ;
+	}
 	if (++philo->n_meal == philo->data->count_eat)
 	{
 		*err = MEAL_LIMIT_REACHED_EXIT_STATUS;
-		return ;
-	}
-	*err = philo_dies_check(philo);
-	if (*err)
-		return ;
-	if (sem_post(philo->data->sem_forks))
-	{
-		print_err(SEM_POST_ERROR);
-		*err = ERROR_STATUS;
-		return ;
-	}
-	if (sem_post(philo->data->sem_forks))
-	{
-		print_err(SEM_POST_ERROR);
-		*err = ERROR_STATUS;
 		return ;
 	}
 }

@@ -26,7 +26,7 @@ static int	handle_err_status(int err_status, t_philo *philo)
 	return (clean_up(philo->data), err_status);
 }
 
-#include <stdio.h>
+
 void	routine(t_philo *philo)
 {
 	int	err;
@@ -39,16 +39,13 @@ void	routine(t_philo *philo)
 	}
 	while (get_time() < philo->data->start_time)
 		usleep(100);
-	if (philo->id % 2 && philo->data->n_philos < 50)
-		usleep(50 * philo->data->n_philos);
-	else if (philo->id % 2 && philo->data->n_philos >= 50)
-		usleep(50 * philo->data->n_philos / 2);
+	if (philo->id % 2)
+		usleep(10 * philo->data->t_eat);
 	while (1)
 	{
 		philo_eating(philo, &err);
 		if (err)
 			exit(handle_err_status(err, philo));
-		printf("routine:eating finished\n");
 		philo_activity(philo, SLEEP, &err);
 		if (err)
 			exit(handle_err_status(err, philo));

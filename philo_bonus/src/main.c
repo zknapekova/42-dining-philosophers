@@ -48,6 +48,7 @@ int	init_process(t_data *data)
 		}
 		i++;
 	}
+	
 	return (0);
 }
 
@@ -81,7 +82,7 @@ int	main(int argc, char *argv[])
 		return (clean_up(data), print_err(TH_CREATE_ERROR), 1);
 	err = init_process(data);
 	if (err)
-		return (clean_up(data), pthread_join(data->monitoring_th, NULL), err);
-	pthread_join(data->monitoring_th, NULL);
+		return (clean_up(data), pthread_detach(data->monitoring_th), err);
+	pthread_detach(data->monitoring_th);
 	return (clean_up(data), 0);
 }

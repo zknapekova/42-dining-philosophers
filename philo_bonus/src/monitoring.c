@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include <stdio.h>
+
 int	philo_dies_check(t_philo *philo)
 {
 	if (sem_wait(philo->sem_last_meal))
@@ -42,7 +42,7 @@ void	*philo_monitoring_routine(void *arg)
 	{
 		if (philo_dies_check(philo))
 			return (NULL);
-		usleep(50);
+		usleep(70);
 	}
 	return (NULL);
 }
