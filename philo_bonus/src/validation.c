@@ -23,7 +23,6 @@ static int	init_data(int argc, char *argv[], t_data *data)
 	data->t_sleep = ft_atoi_philos(argv[4]);
 	data->count_eat = -1;
 	data->count_eat_n_philos = 0;
-	data->stop = 0;
 	data->n_forks = data->n_philos;
 	if (argc == 6)
 		data->count_eat = ft_atoi_philos(argv[5]);
@@ -59,19 +58,17 @@ static int	init_philos(t_data *data)
 		sem_unlink(sem_name);
 		if (data->philos[i].sem_last_meal == SEM_FAILED)
 			return (print_err(SEM_INIT_ERROR), 1);
+		free(temp);
+		free(sem_name);
 	}
 	return (0);
 }
 
 static int	init_semaphors(t_data *data)
 {
-	sem_unlink("/sem_stop");
 	sem_unlink("/sem_write");
 	sem_unlink("/sem_forks");
-	data->sem_stop = sem_open("/sem_stop", O_CREAT, 0644, 1);
-	sem_unlink("/sem_stop");
-	if (data->sem_stop == SEM_FAILED)
-		return (print_err(SEM_INIT_ERROR), 1);
+	sem_unlink("/sem_stop_parent");
 	data->sem_write = sem_open("/sem_write", O_CREAT, 0644, 1);
 	sem_unlink("/sem_write");
 	if (data->sem_write == SEM_FAILED)
@@ -79,6 +76,10 @@ static int	init_semaphors(t_data *data)
 	data->sem_forks = sem_open("/sem_forks", O_CREAT, 0644, data->n_philos);
 	sem_unlink("/sem_forks");
 	if (data->sem_forks == SEM_FAILED)
+		return (print_err(SEM_INIT_ERROR), 1);
+	data->sem_stop_parent = sem_open("/sem_stop_parent", O_CREAT, 0644, 0);
+	sem_unlink("/sem_stop_parent");
+	if (data->sem_stop_parent == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), 1);
 	return (0);
 }

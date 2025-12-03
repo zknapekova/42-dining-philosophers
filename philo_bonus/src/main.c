@@ -20,7 +20,7 @@ int	init_process(t_data *data)
 {
 	int	i;
 	int	status;
-	int	exit_pid;
+	int exit_status;
 	
 	i = 0;
 	data->start_time = get_time() + (data->n_philos * 4);
@@ -37,41 +37,33 @@ int	init_process(t_data *data)
 		}
 		i++;
 	}
-	exit_pid = wait(&status);
-	usleep(1500);
-	printf("exit pid: %d\n", exit_pid);
-	usleep(1500);
 	i = 0;
 	while (i < data->n_philos)
 	{
-		if (data->philos[i].pid != exit_pid)
+		waitpid(data->philos[i].pid, &status, 0);
+		if (WIFEXITED(status)) 
 		{
-			printf("philo %d to be killed\n", data->philos[i].id);
-			kill(data->philos[i].pid, SIGTERM);
+    		exit_status = WEXITSTATUS(status);
+			printf("init_process philo %d exited with status %d \n", data->philos[i].id, exit_status);
 		}
 		i++;
 	}
-	i = 0;
-	while (i < data->n_philos)
-	{
-		printf("loop2: philo %d\n", data->philos[i].id);
-		waitpid(data->philos[i].pid, NULL, 0);
-		i++;
-	}
 	return (0);
-	//create global monitoring thread
 }
 
 void	clean_up(t_data *data)
 {
-	sem_close(data->sem_stop);
+	int	i;
+	
+	i = 0;
 	sem_close(data->sem_write);
 	sem_close(data->sem_forks);
+	sem_close(data->sem_stop_parent);
+	while (i < data->n_philos)
+		sem_close(data->philos[i++].sem_last_meal);
 	free(data->philos);
 	free(data);
 }
-
-
 
 
 int	main(int argc, char *argv[])
@@ -84,12 +76,12 @@ int	main(int argc, char *argv[])
 	data = validate(argc, argv);
 	if (!data)
 		return (1);
+	if (pthread_create(&data->monitoring_th, NULL, \
+	&parent_monitoring_routine, data) != 0)
+		return (clean_up(data), print_err(TH_CREATE_ERROR), 1);
 	err = init_process(data);
 	if (err)
-		return (err);
-	/*if (create_threads(data))
-		return (clean_up(data), 1);
-	if (start_monitor(data))
-		return (detach_threads(data, data->n_philos), clean_up(data), 1);*/
+		return (clean_up(data), pthread_join(data->monitoring_th, NULL), err);
+	pthread_join(data->monitoring_th, NULL);
 	return (clean_up(data), 0);
 }

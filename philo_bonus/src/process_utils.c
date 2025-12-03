@@ -18,14 +18,12 @@
 
 static int	handle_err_status(int err_status, t_philo *philo)
 {
-	if (pthread_join(philo->th, NULL))
+	if (pthread_detach(philo->th))
 	{
-		sem_close(philo->sem_last_meal);
 		print_err(TH_JOIN_ERROR);
-		return (free(philo->data), ERROR_STATUS);
+		return (clean_up(philo->data), ERROR_STATUS);
 	}
-	sem_close(philo->sem_last_meal);
-	return (free(philo->data), err_status);
+	return (clean_up(philo->data), err_status);
 }
 
 #include <stdio.h>
@@ -45,12 +43,12 @@ void	routine(t_philo *philo)
 		usleep(50 * philo->data->n_philos);
 	else if (philo->id % 2 && philo->data->n_philos >= 50)
 		usleep(50 * philo->data->n_philos / 2);
-	printf("id: %d\n", philo->id);
 	while (1)
 	{
 		philo_eating(philo, &err);
 		if (err)
 			exit(handle_err_status(err, philo));
+		printf("routine:eating finished\n");
 		philo_activity(philo, SLEEP, &err);
 		if (err)
 			exit(handle_err_status(err, philo));

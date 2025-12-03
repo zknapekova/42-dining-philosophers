@@ -46,7 +46,6 @@ int	update_last_meal_time(t_philo *philo)
 	if (sem_post(philo->sem_last_meal))
 		return (print_err(SEM_POST_ERROR), ERROR_STATUS);
 	return (0);
-	
 }
 
 int	get_activity_time(t_philo *philo, t_philo_status status, time_t *time)
@@ -85,13 +84,10 @@ void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 	}
 	while (1)
 	{
-		*err = philo_dies_check(philo);
-		if (*err)
-			return ;
 		if (start + time <= get_time())
 			break ;
-		usleep(100);
 	}
+	printf("philo %d finished eating\n", philo->id);
 }
 
 void	philo_eating(t_philo *philo, int *err)
@@ -117,23 +113,14 @@ void	philo_eating(t_philo *philo, int *err)
 	philo_activity(philo, EAT, err);
 	if (*err)
 		return ;
-	if (sem_wait(philo->sem_last_meal))
+	if (++philo->n_meal == philo->data->count_eat)
 	{
-		print_err(SEM_WAIT_ERROR);
-		*err = ERROR_STATUS;
+		*err = MEAL_LIMIT_REACHED_EXIT_STATUS;
 		return ;
 	}
-	//if (++philo->n_meal == philo->data->count_eat)
-		//send signal to parent process?
 	*err = philo_dies_check(philo);
 	if (*err)
 		return ;
-	if (sem_post(philo->sem_last_meal))
-	{
-		print_err(SEM_POST_ERROR);
-		*err = ERROR_STATUS;
-		return ;
-	}
 	if (sem_post(philo->data->sem_forks))
 	{
 		print_err(SEM_POST_ERROR);
@@ -147,3 +134,4 @@ void	philo_eating(t_philo *philo, int *err)
 		return ;
 	}
 }
+

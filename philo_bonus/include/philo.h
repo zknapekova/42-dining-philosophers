@@ -28,6 +28,7 @@
 # define SEM_WAIT_ERROR "Semafor lock failed"
 # define SEM_POST_ERROR "Semafor unlock failed"
 # define PROC_CREATE_ERROR "Creation of a child process failed"
+# define MEAL_LIMIT_REACHED_EXIT_STATUS 3
 # define DIE_FROM_STARVATION_EXIT_STATUS 2
 # define ERROR_STATUS 1
 # define SEM_LAST_MEAL_NAME "/sem_last_meal"
@@ -65,13 +66,12 @@ typedef struct s_data
 	time_t			t_eat;
 	int				count_eat;
 	int				count_eat_n_philos;
-	int				stop;
 	time_t			start_time;
 	t_philo			*philos;
-	sem_t			*sem_stop;
+	sem_t			*sem_stop_parent;
 	sem_t			*sem_write;
 	sem_t			*sem_forks;
-	//pthread_t		monitoring_th;
+	pthread_t		monitoring_th;
 }	t_data;
 
 void	print_err(char *message);
@@ -80,7 +80,6 @@ t_data	*validate(int argc, char *argv[]);
 void	clean_up(t_data *data);
 time_t	get_time(void);
 int		philo_dies_check(t_philo *philo);
-int		check_simulation_stop_fl(t_data *data);
 int		start_monitor(t_data *data);
 void	philo_activity(t_philo *philo, t_philo_status status, int *err);
 time_t	determine_think_time(t_philo *philo);
@@ -93,5 +92,6 @@ void	routine(t_philo *philo);
 int		ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
+void	*parent_monitoring_routine(void *arg);
 
 #endif
