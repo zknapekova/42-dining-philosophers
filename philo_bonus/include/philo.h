@@ -91,5 +91,6 @@ int		ft_strlen(const char *str);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
 void	*parent_monitoring_routine(void *arg);
+int		init_process(t_data *data);
 
 #endif

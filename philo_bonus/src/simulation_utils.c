@@ -12,6 +12,7 @@
 
 #include "philo.h"
 #include <unistd.h>
+#include <stdio.h>
 
 time_t	determine_think_time(t_philo *philo)
 {
@@ -67,6 +68,8 @@ void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 	time_t	start;
 	time_t	time;
 
+	printf("%ld philo_activity: philo %d\n", get_time() - \
+			philo->data->start_time, philo->id);
 	*err = get_activity_time(philo, status, &time);
 	if (*err != 0)
 		return ;
@@ -85,10 +88,14 @@ void	philo_activity(t_philo *philo, t_philo_status status, int *err)
 		if (start + time <= get_time())
 			break ;
 	}
+	printf("%ld philo_activity: philo %d finished\n", get_time() - \
+			philo->data->start_time, philo->id);
 }
 
 void	philo_eating(t_philo *philo, int *err)
 {
+	printf("%ld philo_eating function start: philo %d\n", get_time() - \
+			philo->data->start_time, philo->id);
 	if (sem_wait(philo->data->sem_forks))
 	{
 		print_err(SEM_WAIT_ERROR);
@@ -127,5 +134,7 @@ void	philo_eating(t_philo *philo, int *err)
 		*err = MEAL_LIMIT_REACHED_EXIT_STATUS;
 		return ;
 	}
+	printf("%ld philo_eating: philo %d end\n", get_time() - \
+			philo->data->start_time, philo->id);
 }
 

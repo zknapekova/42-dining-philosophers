@@ -14,12 +14,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 int	init_process(t_data *data)
 {
 	int	i;
 	int	status;
-	int exit_status;
 	
 	i = 0;
 	data->start_time = get_time() + (data->n_philos * 4);
@@ -40,8 +40,6 @@ int	init_process(t_data *data)
 	while (i < data->n_philos)
 	{
 		waitpid(data->philos[i].pid, &status, 0);
-		if (WIFEXITED(status)) 
-    		exit_status = WEXITSTATUS(status);
 		i++;
 	}
 	return (0);

@@ -12,8 +12,7 @@
 
 #include "philo.h"
 #include <stdlib.h>
-#include <sys/wait.h>
-#include <unistd.h>
+
 
 void	clean_up(t_data *data)
 {
