@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:13 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/12/07 16:08:07 by zuknapek         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:27:59 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,11 @@ int	init_semaphors(t_data *data)
 	sem_unlink("/sem_forks");
 	if (data->sem_forks == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), 1);
-	data->sem_stop_parent = sem_open("/sem_stop_parent", O_CREAT, 0644, 0);
+	data->sem_stop_parent = sem_open("/sem_stop_parent", O_CREAT, 0644, 1);
 	sem_unlink("/sem_stop_parent");
 	if (data->sem_stop_parent == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), 1);
+	if (sem_post(data->sem_stop_parent))
+		return (print_err(SEM_POST_ERROR), 1);
 	return (0);
 }
