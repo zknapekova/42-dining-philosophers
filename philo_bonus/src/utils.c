@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:37 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:43:03 by zuknapek         ###   ########.fr       */
+/*   Updated: 2025/12/07 13:04:51 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <stdlib.h>
-
 
 void	print_err(char *message)
 {

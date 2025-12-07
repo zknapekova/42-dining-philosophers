@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:34:47 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:38:02 by zuknapek         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:09:12 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # define DIE_FROM_STARVATION_EXIT_STATUS 2
 # define ERROR_STATUS 1
 # define SEM_LAST_MEAL_NAME "/sem_last_meal"
+# define SEM_MEAL_COUNT_NAME "/sem_meal_count"
 
 struct	s_data;
 
@@ -53,6 +54,7 @@ typedef struct s_philo
 	time_t			last_meal_time;
 	int				pid;
 	sem_t			*sem_last_meal;
+	sem_t			*sem_meal_count;
 }	t_philo;
 
 typedef struct s_data
@@ -78,7 +80,6 @@ t_data	*validate(int argc, char *argv[]);
 void	clean_up(t_data *data);
 time_t	get_time(void);
 int		philo_dies_check(t_philo *philo);
-int		start_monitor(t_data *data);
 void	philo_activity(t_philo *philo, t_philo_status status, int *err);
 time_t	determine_think_time(t_philo *philo);
 int		update_last_meal_time(t_philo *philo);
@@ -92,5 +93,9 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_itoa(int n);
 void	*parent_monitoring_routine(void *arg);
 int		init_process(t_data *data);
+int		update_meal_count(t_philo *philo);
+int		init_data(int argc, char *argv[], t_data *data);
+int		init_philos(t_data *data);
+int		init_semaphors(t_data *data);
 
 #endif

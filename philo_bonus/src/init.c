@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validation.c                                       :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:13 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:33:13 by zuknapek         ###   ########.fr       */
+/*   Updated: 2025/12/07 16:08:07 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,64 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-static int	init_data(int argc, char *argv[], t_data *data)
+static char	*get_sem_name(int id, char *base_name)
 {
-	data->n_philos = ft_atoi_philos(argv[1]);
-	data->t_die = ft_atoi_philos(argv[2]);
-	data->t_eat = ft_atoi_philos(argv[3]);
-	data->t_sleep = ft_atoi_philos(argv[4]);
-	data->count_eat = -1;
-	data->count_eat_n_philos = 0;
-	data->n_forks = data->n_philos;
-	if (argc == 6)
-		data->count_eat = ft_atoi_philos(argv[5]);
-	return (0);
-}
-
-static int	init_philos(t_data *data)
-{
-	int		i;
 	char	*temp;
 	char	*sem_name;
 
+	temp = ft_itoa(id);
+	if (!temp)
+		return (print_err(MALLOC_ERROR), NULL);
+	sem_name = ft_strjoin(base_name, temp);
+	free(temp);
+	if (!sem_name)
+		return (print_err(MALLOC_ERROR), NULL);
+	return (sem_name);
+}
+
+int	init_sem_meal_count(t_philo *philo)
+{
+	char	*sem_meal_count_name;
+
+	if (philo->data->count_eat > 0)
+	{
+		sem_meal_count_name = get_sem_name(philo->id, \
+			SEM_MEAL_COUNT_NAME);
+		if (!sem_meal_count_name)
+			return (print_err(MALLOC_ERROR), 1);
+		sem_unlink(sem_meal_count_name);
+		philo->sem_meal_count = sem_open(sem_meal_count_name, \
+			O_CREAT, 0644, 1);
+		sem_unlink(sem_meal_count_name);
+		if (philo->sem_meal_count == SEM_FAILED)
+			return (print_err(SEM_INIT_ERROR), free(sem_meal_count_name), 1);
+		free(sem_meal_count_name);
+	}
+	return (0);
+}
+
+int	init_sem_last_meal(t_philo *philo)
+{
+	char	*sem_last_meal_name;
+
+	sem_last_meal_name = get_sem_name(philo->id, SEM_LAST_MEAL_NAME);
+	if (!sem_last_meal_name)
+		return (print_err(MALLOC_ERROR), 1);
+	sem_unlink(sem_last_meal_name);
+	philo->sem_last_meal = sem_open(sem_last_meal_name, O_CREAT, \
+		0644, 1);
+	sem_unlink(sem_last_meal_name);
+	if (philo->sem_last_meal == SEM_FAILED)
+		return (print_err(SEM_INIT_ERROR), free(sem_last_meal_name), 1);
+	free(sem_last_meal_name);
+	return (0);
+}
+
+int	init_philos(t_data *data)
+{
+	int		i;
+
 	i = -1;
-	temp = NULL;
 	data->philos = malloc(sizeof(t_philo) * data->n_philos);
 	if (!data->philos)
 		return (print_err(MALLOC_ERROR), 1);
@@ -45,24 +81,15 @@ static int	init_philos(t_data *data)
 		data->philos[i].n_meal = 0;
 		data->philos[i].data = data;
 		data->philos[i].pid = -1;
-		temp = ft_itoa(data->philos[i].id);
-		if (!temp)
-			return (print_err(MALLOC_ERROR), 1);
-		sem_name = ft_strjoin(SEM_LAST_MEAL_NAME, temp);
-		if (!sem_name)
-			return (print_err(MALLOC_ERROR), 1);
-		sem_unlink(sem_name);
-		data->philos[i].sem_last_meal = sem_open(sem_name, O_CREAT, 0644, 1);
-		sem_unlink(sem_name);
-		if (data->philos[i].sem_last_meal == SEM_FAILED)
-			return (print_err(SEM_INIT_ERROR), 1);
-		free(temp);
-		free(sem_name);
+		if (init_sem_last_meal(&data->philos[i]))
+			return (1);
+		if (init_sem_meal_count(&data->philos[i]))
+			return (1);
 	}
 	return (0);
 }
 
-static int	init_semaphors(t_data *data)
+int	init_semaphors(t_data *data)
 {
 	sem_unlink("/sem_write");
 	sem_unlink("/sem_forks");
@@ -80,23 +107,4 @@ static int	init_semaphors(t_data *data)
 	if (data->sem_stop_parent == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), 1);
 	return (0);
-}
-
-t_data	*validate(int argc, char *argv[])
-{
-	t_data	*data;
-	
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (print_err(MALLOC_ERROR), NULL);
-	if (init_data(argc, argv, data))
-		return (free(data), NULL);
-	if (data->n_philos <= 0 || data->t_die < 0 || data->t_eat < 0 \
-	|| data->t_sleep < 0 || data->count_eat == -2)
-		return (print_err(NUM_ARG_ERROR), free(data), NULL);
-	if (data->count_eat == 0)
-		return (free(data), NULL);
-	if (init_semaphors(data) || init_philos(data))
-		return (clean_up(data), NULL);
-	return (data);
 }

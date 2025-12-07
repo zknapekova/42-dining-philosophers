@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:34:08 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:52:58 by zuknapek         ###   ########.fr       */
+/*   Updated: 2025/12/07 15:26:39 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,15 @@ void	*philo_monitoring_routine(void *arg)
 	{
 		if (philo_dies_check(philo))
 			return (NULL);
+		if (philo->data->count_eat > 0)
+		{
+			if (sem_wait(philo->sem_meal_count))
+				return (print_err(SEM_WAIT_ERROR), NULL);
+			if (philo->n_meal == philo->data->count_eat)
+				return (NULL);
+			if (sem_post(philo->sem_meal_count))
+				return (print_err(SEM_POST_ERROR), NULL);
+		}
 		usleep(70);
 	}
 	return (NULL);
@@ -56,7 +65,7 @@ void	*parent_monitoring_routine(void *arg)
 	i = 0;
 	while (i < data->n_philos)
 	{
-		kill(data->philos[i].pid, SIGTERM);
+		kill(data->philos[i].pid, SIGKILL);
 		i++;
 	}
 	return (NULL);
