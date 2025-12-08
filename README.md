@@ -20,3 +20,14 @@ During that time, they will need to hold two forks.
 philosophers have eaten at least number_of_times_each_philosopher_must_eat
 times, the simulation stops. If not specified, the simulation stops when a
 philosopher dies.
+
+Example for running the first part:
+```
+cd philo
+./philo 2 800 200 200 4
+```
+Example for running the second part:
+```
+cd philo_bonus
+./philo_bonus 2 800 200 200 4
+```
