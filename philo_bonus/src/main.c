@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:34:22 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/12/07 16:07:25 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/11 19:15:56 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ t_data	*validate(int argc, char *argv[])
 	if (argc == 6)
 		data->count_eat = ft_atoi_philos(argv[5]);
 	if (data->n_philos <= 0 || data->t_die < 0 || data->t_eat < 0 \
-	|| data->t_sleep < 0 || data->count_eat == -2)
+|| data->t_sleep < 0 || data->count_eat == -2)
 		return (print_err(NUM_ARG_ERROR), free(data), NULL);
 	if (data->count_eat == 0)
 		return (free(data), NULL);
@@ -86,7 +86,7 @@ int	main(int argc, char *argv[])
 	if (err)
 		return (clean_up(data), err);
 	if (pthread_create(&data->monitoring_th, NULL, \
-	&parent_monitoring_routine, data) != 0)
+&parent_monitoring_routine, data) != 0)
 		return (clean_up(data), print_err(TH_CREATE_ERROR), 1);
 	wait_for_processes(data);
 	if (sem_post(data->sem_stop_parent))

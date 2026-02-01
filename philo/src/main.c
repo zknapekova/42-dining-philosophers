@@ -17,7 +17,6 @@ int	main(int argc, char *argv[])
 {
 	t_data	*data;
 
-	
 	if (argc < 5 || argc > 6)
 		return (print_err(N_ARG_ERROR), 1);
 	data = validate(argc, argv);

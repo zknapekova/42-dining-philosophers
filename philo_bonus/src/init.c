@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:13 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/12/07 16:27:59 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:42:33 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ int	init_sem_meal_count(t_philo *philo)
 	if (philo->data->count_eat > 0)
 	{
 		sem_meal_count_name = get_sem_name(philo->id, \
-			SEM_MEAL_COUNT_NAME);
+SEM_MEAL_COUNT_NAME);
 		if (!sem_meal_count_name)
 			return (print_err(MALLOC_ERROR), 1);
 		sem_unlink(sem_meal_count_name);
 		philo->sem_meal_count = sem_open(sem_meal_count_name, \
-			O_CREAT, 0644, 1);
+O_CREAT, 0644, 1);
 		sem_unlink(sem_meal_count_name);
 		if (philo->sem_meal_count == SEM_FAILED)
 			return (print_err(SEM_INIT_ERROR), free(sem_meal_count_name), 1);
@@ -59,7 +59,7 @@ int	init_sem_last_meal(t_philo *philo)
 		return (print_err(MALLOC_ERROR), 1);
 	sem_unlink(sem_last_meal_name);
 	philo->sem_last_meal = sem_open(sem_last_meal_name, O_CREAT, \
-		0644, 1);
+0644, 1);
 	sem_unlink(sem_last_meal_name);
 	if (philo->sem_last_meal == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), free(sem_last_meal_name), 1);
@@ -102,11 +102,9 @@ int	init_semaphors(t_data *data)
 	sem_unlink("/sem_forks");
 	if (data->sem_forks == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), 1);
-	data->sem_stop_parent = sem_open("/sem_stop_parent", O_CREAT, 0644, 1);
+	data->sem_stop_parent = sem_open("/sem_stop_parent", O_CREAT, 0644, 0);
 	sem_unlink("/sem_stop_parent");
 	if (data->sem_stop_parent == SEM_FAILED)
 		return (print_err(SEM_INIT_ERROR), 1);
-	if (sem_post(data->sem_stop_parent))
-		return (print_err(SEM_POST_ERROR), 1);
 	return (0);
 }

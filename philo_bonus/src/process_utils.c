@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:55 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/12/07 15:42:19 by zuknapek         ###   ########.fr       */
+/*   Updated: 2025/12/12 16:45:42 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	routine(t_philo *philo)
 	int	err;
 
 	err = EXIT_SUCCESS;
-	if (pthread_create(&philo->th, NULL, &philo_monitoring_routine, philo) != 0)
+	if (pthread_create(&philo->th, NULL, &philo_monitoring_routine, philo))
 	{
 		print_err(TH_CREATE_ERROR);
 		exit (handle_err_status(ERROR_STATUS, philo));

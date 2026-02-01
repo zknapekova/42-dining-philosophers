@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:34:08 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:52:58 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:43:00 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	*monitoring_routine(void *arg)
 int	start_monitor(t_data *data)
 {
 	if (pthread_create(&data->monitoring_th, NULL, &monitoring_routine, \
-		data) != 0)
+data) != 0)
 		return (print_err(TH_CREATE_ERROR), 1);
 	return (0);
 }
@@ -48,7 +48,7 @@ int	philo_dies_check(t_philo *philo)
 	status = 0;
 	pthread_mutex_lock(&philo->last_meal_lock);
 	if ((get_time() >= philo->last_meal_time + philo->data->t_die || \
-	philo->data->n_philos == philo->data->count_eat_n_philos))
+philo->data->n_philos == philo->data->count_eat_n_philos))
 	{
 		if (philo->data->count_eat_n_philos != philo->data->n_philos)
 			print_status_message(DIE, philo, get_time());

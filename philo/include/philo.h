@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:34:47 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:38:02 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:38:22 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ int		philo_activity(t_philo *philo, t_philo_status status);
 time_t	determine_think_time(t_philo *philo);
 void	update_last_meal_time(t_philo *philo);
 int		philo_eating(t_philo *philo);
-int		print_status_message(t_philo_status status, \
-	t_philo *philo, time_t start_time);
+int		print_status_message(t_philo_status status,\
+		t_philo *philo, time_t start_time);
 int		create_threads(t_data *data);
 int		join_threads(t_data *data);
 void	detach_threads(t_data *data, int n);

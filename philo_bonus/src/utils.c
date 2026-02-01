@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:37 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/12/07 13:04:51 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:45:30 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,25 +30,25 @@ time_t	get_time(void)
 }
 
 int	print_status_message(t_philo_status status, t_philo *philo, \
-	time_t start_time)
+time_t start_time)
 {
 	if (sem_wait(philo->data->sem_write))
 		return (print_err(SEM_WAIT_ERROR), ERROR_STATUS);
 	if (status == SLEEP)
 		printf("%ld %d is sleeping\n", start_time - \
-			philo->data->start_time, philo->id);
+philo->data->start_time, philo->id);
 	if (status == EAT)
 		printf("%ld %d is eating\n", start_time - \
-			philo->data->start_time, philo->id);
+philo->data->start_time, philo->id);
 	if (status == TAKE_FORK)
 		printf("%ld %d has taken a fork\n", start_time - \
-			philo->data->start_time, philo->id);
+philo->data->start_time, philo->id);
 	if (status == THINK)
 		printf("%ld %d is thinking\n", start_time - \
-			philo->data->start_time, philo->id);
+philo->data->start_time, philo->id);
 	if (status == DIE)
 		printf("%ld %d died\n", get_time() - \
-		philo->data->start_time, philo->id);
+philo->data->start_time, philo->id);
 	else
 		if (sem_post(philo->data->sem_write))
 			return (print_err(SEM_POST_ERROR), ERROR_STATUS);

@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:55 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:33:55 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:34:38 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ void	*routine(void *arg)
 	while (1)
 	{
 		if (philo_eating(philo) || \
-		philo_activity(philo, SLEEP) || \
-		philo_activity(philo, THINK))
+philo_activity(philo, SLEEP) || \
+philo_activity(philo, THINK))
 			return (NULL);
 	}
 	return (NULL);
@@ -44,7 +44,7 @@ int	create_threads(t_data *data)
 	{
 		data->philos[i].last_meal_time = data->start_time;
 		if (pthread_create(&data->philos[i].th, NULL, &routine, \
-			&data->philos[i]) != 0)
+&data->philos[i]) != 0)
 			return (print_err(TH_CREATE_ERROR), detach_threads(data, i - 1), 1);
 		i++;
 	}

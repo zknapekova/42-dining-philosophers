@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:34:17 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:53:10 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:32:03 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,13 @@ int	philo_eating(t_philo *philo)
 	philo->l_fork->status = UNAVAILABLE;
 	if (print_status_message(TAKE_FORK, philo, get_time()))
 		return (pthread_mutex_unlock(&philo->r_fork->mutex), \
-		pthread_mutex_unlock(&philo->l_fork->mutex), 1);
+pthread_mutex_unlock(&philo->l_fork->mutex), 1);
 	if (philo_activity(philo, EAT))
 		return (pthread_mutex_unlock(&philo->r_fork->mutex), \
-		pthread_mutex_unlock(&philo->l_fork->mutex), 1);
+pthread_mutex_unlock(&philo->l_fork->mutex), 1);
 	pthread_mutex_lock(&philo->last_meal_lock);
 	if (++philo->n_meal == philo->data->count_eat && \
-		philo->data->count_eat_n_philos < philo->data->n_philos)
+philo->data->count_eat_n_philos < philo->data->n_philos)
 		philo->data->count_eat_n_philos++;
 	pthread_mutex_unlock(&philo->last_meal_lock);
 	philo_dies_check(philo);

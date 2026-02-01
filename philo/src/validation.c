@@ -6,7 +6,7 @@
 /*   By: zuknapek <zuknapek@student.42prague.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 16:33:13 by zuknapek          #+#    #+#             */
-/*   Updated: 2025/10/12 16:33:13 by zuknapek         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:39:40 by zuknapek         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,14 +92,14 @@ static int	init_forks(t_data *data)
 t_data	*validate(int argc, char *argv[])
 {
 	t_data	*data;
-	
+
 	data = malloc(sizeof(t_data));
 	if (!data)
 		return (print_err(MALLOC_ERROR), NULL);
 	if (init_data(argc, argv, data))
 		return (free(data), NULL);
-	if (data->n_philos <= 0 || data->t_die < 0 || data->t_eat < 0 \
-	|| data->t_sleep < 0 || data->count_eat == -2)
+	if (data->n_philos <= 0 || data->t_die < 0 || data->t_eat < 0 || \
+data->t_sleep < 0 || data->count_eat == -2)
 		return (print_err(NUM_ARG_ERROR), free(data), NULL);
 	if (data->count_eat == 0)
 		return (free(data), NULL);
