@@ -21,13 +21,15 @@ philosophers have eaten at least number_of_times_each_philosopher_must_eat
 times, the simulation stops. If not specified, the simulation stops when a
 philosopher dies.
 
-Example for running the first part:
+Example for compiling and running the first part:
 ```
 cd philo
+make
 ./philo 2 800 200 200 4
 ```
-Example for running the second part:
+Example for compiling and running the bonus part:
 ```
 cd philo_bonus
+make
 ./philo_bonus 2 800 200 200 4
 ```
